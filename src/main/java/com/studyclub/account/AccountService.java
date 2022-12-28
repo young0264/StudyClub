@@ -4,6 +4,8 @@ package com.studyclub.account;
 import com.studyclub.domain.Account;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,8 +13,16 @@ import org.springframework.stereotype.Service;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final JavaMailSender javaMailSender;
 
-    public Account saveAccount(SignUpForm signUpForm) {
+    public void processNewAccount(SignUpForm signUpForm) {
+        Account newAccount = saveAccount(signUpForm);
+        newAccount.generateEmailCheckToken();
+        sendSignUpConfirmEmail(newAccount);
+        //        ConsoleMailSender consoleMailSender = new ConsoleMailSender();
+        //        consoleMailSender.send(simpleMailMessage);
+    }
+    private Account saveAccount(SignUpForm signUpForm) {
         Account account = Account.builder()
                 .nickname(signUpForm.getNickname())
                 .password(signUpForm.getPassword()) //TODO encoding 필요
@@ -21,7 +31,14 @@ public class AccountService {
                 .studyEnrollmentResultByWeb(true)
                 .studyUpdatedByWeb(true)
                 .build();
-
         return accountRepository.save(account);
+    }
+    private void sendSignUpConfirmEmail(Account newAccount) {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(newAccount.getEmail());
+        simpleMailMessage.setSubject("스터디클럽, 회원 가입 인증");
+        simpleMailMessage.setText("/check-email-token?token="+ newAccount.getEmailCheckToken()+
+                "&email=" + newAccount.getEmail());
+        javaMailSender.send(simpleMailMessage);
     }
 }

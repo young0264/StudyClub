@@ -39,7 +39,6 @@ public class AccountController {
 
     @GetMapping("/sign-up")
     public String signup(Model model) {
-
         model.addAttribute(new SignUpForm()); //"SignUpForm"이 model로 들어감 -> Test
         return "account/sign-up";
     }
@@ -49,18 +48,7 @@ public class AccountController {
         if (errors.hasErrors()) {
             return "account/sign-up";
         }
-        Account newAccount = accountService.saveAccount(signUpForm);
-
-        newAccount.generateEmailCheckToken();
-        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
-        simpleMailMessage.setTo(newAccount.getEmail());
-        simpleMailMessage.setSubject("스터디클럽, 회원 가입 인증");
-        simpleMailMessage.setText("/check-email-token?token="+ newAccount.getEmailCheckToken()+
-                "&email=" + newAccount.getEmail());
-
-//        javaMailSender.send(simpleMailMessage);
-        ConsoleMailSender consoleMailSender = new ConsoleMailSender();
-        consoleMailSender.send(simpleMailMessage);
+        accountService.processNewAccount(signUpForm);
         return "redirect:/";
     }
 }
