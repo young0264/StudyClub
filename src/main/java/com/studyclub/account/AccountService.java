@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,6 +15,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
+    private final PasswordEncoder passwordEncoder;
 
     public void processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveAccount(signUpForm);
@@ -25,7 +27,7 @@ public class AccountService {
     private Account saveAccount(SignUpForm signUpForm) {
         Account account = Account.builder()
                 .nickname(signUpForm.getNickname())
-                .password(signUpForm.getPassword()) //TODO encoding 필요
+                .password(passwordEncoder.encode(signUpForm.getPassword())) //TODO
                 .email(signUpForm.getEmail())
                 .studyCreatedByWeb(true)
                 .studyEnrollmentResultByWeb(true)
