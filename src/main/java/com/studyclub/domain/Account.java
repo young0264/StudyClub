@@ -58,4 +58,11 @@ public class Account {
     public void generateEmailCheckToken() {
         this.emailCheckToken = UUID.randomUUID().toString();
     }
+
+    public boolean isValidToken(String token) {
+        if (this.emailCheckToken.equals(token)) {
+            return true;
+        }
+        return false;
+    }
 }

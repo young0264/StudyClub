@@ -1,12 +1,8 @@
 package com.studyclub.account;
 
 
-import com.studyclub.ConsoleMailSender;
 import com.studyclub.domain.Account;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -16,17 +12,18 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
 public class AccountController {
 
-//    @Autowired
+    //    @Autowired
     private final AccountService accountService;
     private final SignUpFormValidator signUpFormValidator;
-    private final JavaMailSender javaMailSender;
+    private final AccountRepository accountRepository; // repository를 도메인(Account)레벨과 같이 보고 진행
 
-//        signUpFormValidator.validate(signUpForm,errors);
+    //        signUpFormValidator.validate(signUpForm,errors);
 //        if (errors.hasErrors()) {
 //            return "account/sign-up";
 //        }
@@ -37,6 +34,9 @@ public class AccountController {
         webDataBinder.addValidators(signUpFormValidator);
     }
 
+    /**
+     * 회원가입
+     */
     @GetMapping("/sign-up")
     public String signup(Model model) {
         model.addAttribute(new SignUpForm()); //"SignUpForm"이 model로 들어감 -> Test
@@ -51,6 +51,38 @@ public class AccountController {
         accountService.processNewAccount(signUpForm);
         return "redirect:/";
     }
+
+    /**
+     * 회원가입 : 인증 이메일 확인
+     */
+    @GetMapping("/check-email-token")
+    public String checkEmailToken(String token, String email, Model model) {
+        Account account = accountRepository.findByEmail(email);
+
+
+        //error 하나로만 통일시켜서 뿌려주기
+        String view = "account/checked-email";
+        if (account==null) {
+            model.addAttribute("error", "wrong.email");
+            return view;
+        }
+        if (!account.isValidToken(token)) {
+            model.addAttribute("error", "wrong.token");
+            return view;
+        }
+        account.setEmailVerified(true);
+        account.setJoinedAt(LocalDateTime.now());
+        model.addAttribute("numberOfUser", accountRepository.count()); //유저 넘버
+        model.addAttribute("nickname", account.getNickname());
+        return view;
+
+    }
+
+
+//    @GetMapping("/check-email")
+//    public String checkEmail() {
+//
+//    }
 }
 
 
