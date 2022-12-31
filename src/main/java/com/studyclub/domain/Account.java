@@ -65,4 +65,9 @@ public class Account {
         }
         return false;
     }
+
+    public void completeSignUp() {
+        this.emailVerified = true;
+        this.joinedAt = LocalDateTime.now();
+    }
 }

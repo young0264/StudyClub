@@ -70,10 +70,10 @@ public class AccountController {
             model.addAttribute("error", "wrong.token");
             return view;
         }
-        account.setEmailVerified(true);
-        account.setJoinedAt(LocalDateTime.now());
+        account.completeSignUp();
         model.addAttribute("numberOfUser", accountRepository.count()); //유저 넘버
         model.addAttribute("nickname", account.getNickname());
+
         return view;
 
     }
