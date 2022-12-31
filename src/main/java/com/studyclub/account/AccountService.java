@@ -29,13 +29,16 @@ public class AccountService {
     @Transactional//
     public Account processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveAccount(signUpForm);
-        newAccount.generateEmailCheckToken(); //
+        newAccount.generateEmailCheckToken(); 
         sendSignUpConfirmEmail(newAccount);
         //        ConsoleMailSender consoleMailSender = new ConsoleMailSender();
         //        consoleMailSender.send(simpleMailMessage);
         return newAccount;
     }
 
+    /**
+     * 캡슐화
+     */
     private Account saveAccount(SignUpForm signUpForm) {
         Account account = Account.builder()
                 .nickname(signUpForm.getNickname())
