@@ -10,9 +10,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -48,7 +46,8 @@ public class AccountController {
         if (errors.hasErrors()) {
             return "account/sign-up";
         }
-        accountService.processNewAccount(signUpForm);
+        Account account = accountService.processNewAccount(signUpForm);
+        accountService.login(account);
         return "redirect:/";
     }
 
@@ -58,7 +57,6 @@ public class AccountController {
     @GetMapping("/check-email-token")
     public String checkEmailToken(String token, String email, Model model) {
         Account account = accountRepository.findByEmail(email);
-
 
         //error 하나로만 통일시켜서 뿌려주기
         String view = "account/checked-email";
@@ -71,6 +69,8 @@ public class AccountController {
             return view;
         }
         account.completeSignUp();
+        accountService.login(account);
+
         model.addAttribute("numberOfUser", accountRepository.count()); //유저 넘버
         model.addAttribute("nickname", account.getNickname());
 
