@@ -32,6 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### Node ###
+### NPM / Node / 빌드해서 생성되는 파일이나 디렉토리는 .gitignore 파일에 명시하여 버전관리에서 제외한다. ###
 src/main/resources/static/node_modules
 src/main/resources/static/node
