@@ -60,7 +60,7 @@ public class AccountController {
 
         //error 하나로만 통일시켜서 뿌려주기
         String view = "account/checked-email";
-        if (account==null) {
+        if (account == null) {
             model.addAttribute("error", "wrong.email");
             return view;
         }
@@ -75,7 +75,25 @@ public class AccountController {
         model.addAttribute("nickname", account.getNickname());
 
         return view;
+    }
 
+    @GetMapping("/check-email")
+    public String v1(@CurrentUser Account account, Model model) {
+        String email = account.getEmail();
+        model.addAttribute("email", email);
+        return "account/check-email";
+    }
+
+    @GetMapping("/resend-confirm-email")
+    public String emailResendToConfirm(@CurrentUser Account account, Model model) {
+        if (!account.canSendConfirmEmail()) {
+            model.addAttribute("error", "인증 이메일은 1시간에 1번만 전송할 수 있습니다.");
+            model.addAttribute("email", account.getEmail());
+            return "account/check-email";
+        }
+        accountService.sendSignUpConfirmEmail(account);
+        return "redirect:/";
+//        return "account/resend-confirm-email";
     }
 
 
