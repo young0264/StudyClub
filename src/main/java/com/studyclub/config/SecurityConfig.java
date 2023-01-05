@@ -20,6 +20,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/email-login", "/login-by-email", "/search/study").permitAll() //인증x 사용가능, but not secure은 사용 불가
                 .mvcMatchers(HttpMethod.GET, "/profile/*").permitAll()
                 .anyRequest().authenticated();
+
+        http.formLogin()
+                .loginPage("/login").permitAll();
+        http.logout()
+                .logoutSuccessUrl("/");
     }
 
     /**
