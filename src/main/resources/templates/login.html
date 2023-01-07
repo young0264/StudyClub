@@ -6,16 +6,52 @@
 <body class="bg-light">
 <nav th:replace="fragments.html :: main-nav"></nav>
 
-<div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}">
-    스터디올레 가입을 완료하려면 <a th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요.
-</div>
-
 
 <div class="container">
+
     <div class="py-5 text-center">
-        <h2>스터디 클럽 main page</h2>
+        <p class="lead">스터디 클럽</p>
+        <h2>로그인</h2>
     </div>
+    <div class="row justify-content-center">
+        <div th:if="${param.error}" class="alert alert-danger" role="alert">
+            <p>이메일(또는 닉네임)과 패스워드가 일치하지 않습니다.</p>
+            <p>또는 확인되지 않은 이메일을 사용했습니다. 이메일을 확인해 주세요.</p>
+            <p>
+                확인 후 다시 입력하시거나, <a href="#" th:href="@{/find-password}">패스워드 찾기</a>를 이용하세요.
+            </p>
+        </div>
+        <form class="need-validation col-sm-6" action="#" th:action="@{/login}" method="post" novalidate>
+
+        </form>
+
+    </div>
+
+
+
     <div th:replace="fragments.html :: footer"></div>
 </div>
+<script type="application/javascript">
+    (function () {
+        'use strict';
+
+        window.addEventListener('load', function () {
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            var forms = document.getElementsByClassName('needs-validation');
+
+            // Loop over them and prevent submission
+            Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        }, false)
+    }())
+</script>
+
 </body>
 </html>
