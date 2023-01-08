@@ -15,6 +15,7 @@ import java.util.List;
 public class UserAccount extends User {
     private Account account;
 
+    //nickname으로 리턴
     public UserAccount(Account account) {
         super(account.getNickname(), account.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
         this.account = account;
