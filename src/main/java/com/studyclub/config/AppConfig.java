@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class AppConfig {
 
-
+    //PasswordEncoder가 bean으로만 등록되어 잇으면 spring security에서 사용함
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder(); // PasswordEncoder를 직접 생성하는게 아닌 createDelegatingPasswordEncoder에 위임
