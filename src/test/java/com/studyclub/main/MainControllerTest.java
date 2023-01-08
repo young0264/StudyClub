@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,13 +30,14 @@ class MainControllerTest {
 
     @BeforeEach
     void beforeEach() {
-    SignUpForm newSignUpForm = SignUpForm.builder()
-            .nickname("young")
-            .password("12341234")
-            .email("ny2485@naver.com")
-            .build();
-    accountService.processNewAccount(newSignUpForm);
+        SignUpForm newSignUpForm = SignUpForm.builder()
+                .nickname("young")
+                .password("12341234")
+                .email("ny2485@naver.com")
+                .build();
+        accountService.processNewAccount(newSignUpForm);
     }
+
     @Test
     @DisplayName("이메일로 로그인 ")
     void login_with_email() throws Exception {
@@ -73,6 +75,18 @@ class MainControllerTest {
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login?error"))
+                .andExpect(unauthenticated());
+    }
+
+    @WithMockUser
+
+    @Test
+    @DisplayName("로그아웃 ")
+    void logout() throws Exception {
+        mockMvc.perform(post("/logout")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"))
                 .andExpect(unauthenticated());
     }
 }
