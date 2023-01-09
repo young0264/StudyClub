@@ -3,17 +3,20 @@ package com.studyclub.account;
 
 import com.studyclub.domain.Account;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import javax.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class AccountController {
 
     //    @Autowired
@@ -73,7 +76,6 @@ public class AccountController {
 
         model.addAttribute("numberOfUser", accountRepository.count()); //유저 넘버
         model.addAttribute("nickname", account.getNickname());
-
         return view;
     }
 
@@ -96,11 +98,17 @@ public class AccountController {
 //        return "account/resend-confirm-email";
     }
 
-
-//    @GetMapping("/check-email")
-//    public String checkEmail() {
-//
-//    }
+    @GetMapping("/profile/{nickname}")
+    public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
+        Account byNickname = accountRepository.findByNickname(nickname);
+        log.info("byNickname : "+ byNickname.isEmailVerified());
+        if (byNickname == null) {
+            throw new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다.");
+        }
+        model.addAttribute(byNickname); //들어가는 타입(Account)의 camel case = account가 model로 들어감
+        model.addAttribute("isOwner", byNickname.equals(account));
+        return "account/profile";
+    }
 }
 
 

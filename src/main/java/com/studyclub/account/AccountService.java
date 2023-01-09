@@ -74,6 +74,7 @@ public class AccountService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(token);
+        accountRepository.save(account);
 
 
         // 방법2- 정석 //이걸 하려면 plain password를 써야해., authenticationManager bean에 등록되어있지 않음
