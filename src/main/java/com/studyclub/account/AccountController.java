@@ -71,8 +71,8 @@ public class AccountController {
             model.addAttribute("error", "wrong.token");
             return view;
         }
-        account.completeSignUp();
-        accountService.login(account);
+        accountService.completeSignUp(account);
+
 
         model.addAttribute("numberOfUser", accountRepository.count()); //유저 넘버
         model.addAttribute("nickname", account.getNickname());
@@ -101,7 +101,7 @@ public class AccountController {
     @GetMapping("/profile/{nickname}")
     public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
         Account byNickname = accountRepository.findByNickname(nickname);
-        log.info("byNickname : "+ byNickname.isEmailVerified());
+        log.info("byNickname : " + byNickname.isEmailVerified());
         if (byNickname == null) {
             throw new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다.");
         }
@@ -109,6 +109,8 @@ public class AccountController {
         model.addAttribute("isOwner", byNickname.equals(account));
         return "account/profile";
     }
+
+
 }
 
 

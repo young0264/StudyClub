@@ -24,13 +24,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional//
     public Account processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveAccount(signUpForm);
         newAccount.generateEmailCheckToken();
@@ -74,7 +74,6 @@ public class AccountService implements UserDetailsService {
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(token);
-        accountRepository.save(account);
 
 
         // 방법2- 정석 //이걸 하려면 plain password를 써야해., authenticationManager bean에 등록되어있지 않음
@@ -87,6 +86,7 @@ public class AccountService implements UserDetailsService {
 
     //UserDetailsService가 bean으로만 등록되어 잇으면 spring security에서 사용함
     // nickname, email 둘 다 unique true이기 때문에 검증이 됨
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String emailOrNickname) throws UsernameNotFoundException {
         Account account = accountRepository.findByEmail(emailOrNickname);
@@ -99,5 +99,10 @@ public class AccountService implements UserDetailsService {
         }
         return new UserAccount(account);
 
+    }
+
+    public void completeSignUp(Account account) {
+        account.completeSignUp();
+        login(account);
     }
 }
