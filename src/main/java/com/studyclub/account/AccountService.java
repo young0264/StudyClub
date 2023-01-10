@@ -4,6 +4,7 @@ package com.studyclub.account;
 import com.studyclub.domain.Account;
 import com.studyclub.settings.Profile;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -26,6 +27,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AccountService implements UserDetailsService {
 
     private final AccountRepository accountRepository;

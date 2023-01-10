@@ -101,7 +101,7 @@ public class AccountController {
     @GetMapping("/profile/{nickname}")
     public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
         Account byNickname = accountRepository.findByNickname(nickname);
-        log.info("byNickname : " + byNickname.isEmailVerified());
+        log.info("byNickname email verfied: " + byNickname.isEmailVerified());
         if (byNickname == null) {
             throw new IllegalArgumentException(nickname + "에 해당하는 사용자가 없습니다.");
         }
