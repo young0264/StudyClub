@@ -2,6 +2,7 @@ package com.studyclub.account;
 
 
 import com.studyclub.domain.Account;
+import com.studyclub.settings.Profile;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -104,5 +105,13 @@ public class AccountService implements UserDetailsService {
     public void completeSignUp(Account account) {
         account.completeSignUp();
         login(account);
+    }
+
+
+    public void updateProfile(Account account, Profile profile) {
+        //TODO 프로필이미지
+        account.updateProfile(profile.getBio(), profile.getUrl(), profile.getOccupation(), profile.getLocation());
+        accountRepository.save(account);
+        //TODO 문제한개더
     }
 }
