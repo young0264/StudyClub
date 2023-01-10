@@ -76,4 +76,11 @@ public class Account {
     public boolean canSendConfirmEmail() {
         return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1)); //1시간 이전에 만들었는지
     }
+
+    public void updateProfile(String bio, String url, String occupation, String location) {
+        this.bio = bio;
+        this.url = url;
+        this.occupation = occupation;
+        this.location = location;
+    }
 }
