@@ -1,10 +1,12 @@
 package com.studyclub.settings;
 
+import com.studyclub.WithAccount;
 import com.studyclub.account.AccountRepository;
 import com.studyclub.account.AccountService;
 import com.studyclub.account.SignUpForm;
 import com.studyclub.domain.Account;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -27,29 +30,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class SettingsControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
+    @Autowired MockMvc mockMvc;
 
-    @Autowired
-    AccountService accountService;
+    @Autowired AccountService accountService;
 
-    @Autowired
-    AccountRepository accountRepository;
+    @Autowired AccountRepository accountRepository;
 
-    @BeforeEach
-    void beforeEach() {
-        SignUpForm newSignUpForm = SignUpForm.builder()
-                .nickname("young")
-                .password("12341234")
-                .email("ny2485@naver.com")
-                .build();
-        accountService.processNewAccount(newSignUpForm);
+    @AfterEach
+    void afterEach() {
+        accountRepository.deleteAll();
     }
 
     /**
      * 데이타 넣기 전에 before이 실행이 되기 위해(WithUserDetail이 먼저 실행) setupBefore
      */
-    @WithUserDetails(value = "young", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//    @WithUserDetails(value = "young", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+//    @WithSecurityContext()
+    @WithAccount("young")
     @DisplayName("프로필 수정하기 - 입력값 정상일 때")
     @Test
     void updateProfile() throws Exception {
