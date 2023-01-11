@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @Slf4j
 public class SettingsController {
 
-    private static final String SETTINGS_PROFILE = "settings/profile";
+    static final String SETTINGS_PROFILE = "/settings/profile";
     private final AccountService accountService;
 
     @GetMapping("/settings/profile")
@@ -45,7 +45,7 @@ public class SettingsController {
         log.info("update profile : " + profile.getOccupation());
         accountService.updateProfile(account, profile);
         attributes.addFlashAttribute("message", "프로필을 수정했습니다.");
-        return "redirect:/" + SETTINGS_PROFILE;
+        return "redirect:" + SETTINGS_PROFILE;
     }
 
 

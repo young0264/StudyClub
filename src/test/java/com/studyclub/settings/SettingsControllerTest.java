@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +40,18 @@ class SettingsControllerTest {
     @AfterEach
     void afterEach() {
         accountRepository.deleteAll();
+    }
+
+    @WithAccount("young")
+    @DisplayName("프로필 페이지 이동")
+    @Test
+    void show_form() throws Exception {
+        String bio = "짧은 소개를 수정하는 경우?";
+        mockMvc.perform(get(SettingsController.SETTINGS_PROFILE))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("profile"))
+                .andExpect(view().name(SettingsController.SETTINGS_PROFILE));
     }
 
     /**
@@ -61,6 +74,23 @@ class SettingsControllerTest {
 
         Account account = accountRepository.findByNickname("young");
         assertEquals(bio, account.getBio());
+    }
+    @WithAccount("young")
+    @DisplayName("프로필 수정하기 - 입력값 정상이 아닐 때")
+    @Test
+    void updateProfile_error() throws Exception {
+        String bio = "길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우?길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우 길게 소개를 수정하는 경우?";
 
+        mockMvc.perform(post(SettingsController.SETTINGS_PROFILE)
+                        .param("bio", bio)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(view().name(SettingsController.SETTINGS_PROFILE))
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("profile"))
+                .andExpect(model().hasErrors());
+
+        Account account = accountRepository.findByNickname("young");
+        assertNull(account.getBio());
     }
 }
