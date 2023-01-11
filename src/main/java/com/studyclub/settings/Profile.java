@@ -2,18 +2,18 @@ package com.studyclub.settings;
 
 import com.studyclub.domain.Account;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Entity;
 
 @NoArgsConstructor
-//@Data
-//@ComponentScan
-@Getter @Setter
+@Getter
+@Data
 public class Profile {
-
-//    Account account;
 
     private String bio; //프로필
 
@@ -26,4 +26,6 @@ public class Profile {
     public Profile(Account account) {
         this.bio = account.getBio();
     }
+
+
 }
