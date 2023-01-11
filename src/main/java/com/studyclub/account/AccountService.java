@@ -112,7 +112,7 @@ public class AccountService implements UserDetailsService {
 
     public void updateProfile(Account account, Profile profile) {
         //TODO 프로필이미지
-        account.updateProfile(profile.getBio(), profile.getUrl(), profile.getOccupation(), profile.getLocation());
+        account.updateProfile(profile.getBio(), profile.getUrl(), profile.getOccupation(), profile.getLocation(), profile.getProfileImage());
         accountRepository.save(account);
         //TODO 문제한개더
     }

@@ -10,10 +10,9 @@
             <!--            Avatar-->
             <svg th:if="${#strings.isEmpty(account.profileImage)}" class="img-fluid float-left rounded img-thumbnail"
                  th:data-jdenticon-value="${account.nickname}" width="125" height="125"></svg>
-            <img th:if="${!#strings.isEmpty(account.profileImage)}" class="img-fluid float-left rounded img-thumbnail"
+            <img th:if="${!#strings.isEmpty(account.profileImage)}" th:src="${account.profileImage}" class="img-fluid float-left rounded img-thumbnail"
                  width="125" height="125"/>
         </div>
-
         <div class="col-8">
             <h1 class="disply-4" th:text="${account.nickname}">young</h1>
             <p class="lead" th:if="${!#strings.isEmpty(account.bio)}" th:text="${account.bio}">bio</p>
@@ -81,5 +80,6 @@
                 </div>
             </div>
         </div>
+    </div>
 </body>
 </html>
