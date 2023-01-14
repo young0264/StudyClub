@@ -93,4 +93,36 @@ class SettingsControllerTest {
         Account account = accountRepository.findByNickname("young");
         assertNull(account.getBio());
     }
+
+    @WithAccount("young")
+    @DisplayName("패스워드 수정")
+    @Test
+    void updatePassword_form() throws Exception {
+        mockMvc.perform(get("/settings/password")
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("passwordForm"))
+                .andExpect(view().name(SettingsController.SETTINGS_PASSWORD_VIEW_NAME));
+    }
+
+
+
+    @WithAccount("young")
+    @DisplayName("패스워드 수정-입력정상")
+    @Test
+    void updatePassword_success() throws Exception {
+
+    }
+
+    @WithAccount("young")
+    @DisplayName("패스워드 수정-입력에러")
+    @Test
+    void updatePassword_fail() throws Exception {
+
+    }
+
+
+
+
 }
