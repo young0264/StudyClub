@@ -5,10 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-@NoArgsConstructor
-@Getter
 @Data
-public class Password {
+public class PasswordForm {
 
     @Length(min = 8, max = 50)
     private String newPassword;
