@@ -1,6 +1,7 @@
 package com.studyclub.domain;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -9,8 +10,7 @@ import java.util.UUID;
 @Entity
 @Getter @Setter @Builder
 @EqualsAndHashCode(of = "id") //id값에 대해서만 equals와 hash값 참조 (무한루프 방지)
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class Account {
 
     @Id
@@ -23,6 +23,7 @@ public class Account {
     @Column(unique = true)
     private String nickname;
 
+//    @Length(min=8, max = 50)
     private String password;
 
     private boolean emailVerified;
@@ -83,5 +84,9 @@ public class Account {
         this.occupation = occupation;
         this.location = location;
         this.profileImage = profileImage;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

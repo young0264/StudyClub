@@ -5,12 +5,9 @@ import com.studyclub.domain.Account;
 import com.studyclub.settings.Profile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -115,5 +112,11 @@ public class AccountService implements UserDetailsService {
         account.updateProfile(profile.getBio(), profile.getUrl(), profile.getOccupation(), profile.getLocation(), profile.getProfileImage());
         accountRepository.save(account);
         //TODO 문제한개더
+    }
+
+    public void updatePassword(Account account, String newPassword) {
+        account.updatePassword(passwordEncoder.encode(newPassword));
+        accountRepository.save(account);
+
     }
 }
