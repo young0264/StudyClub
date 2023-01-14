@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithSecurityContext;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -36,6 +37,8 @@ class SettingsControllerTest {
     @Autowired AccountService accountService;
 
     @Autowired AccountRepository accountRepository;
+
+    @Autowired PasswordEncoder passwordEncoder;
 
     @AfterEach
     void afterEach() {
@@ -107,22 +110,36 @@ class SettingsControllerTest {
     }
 
 
-
     @WithAccount("young")
     @DisplayName("패스워드 수정-입력정상")
     @Test
     void updatePassword_success() throws Exception {
-
+        mockMvc.perform(post("/settings/password")
+                        .with(csrf())
+                        .param("newPassword", "123123123")
+                        .param("newPasswordConfirm", "123123123"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl(SettingsController.SETTINGS_PASSWORD_URL))
+                .andExpect(flash().attributeExists("message"));
+        Account young = accountRepository.findByNickname("young");
+        assertTrue(passwordEncoder.matches("123123123", young.getPassword()));
     }
 
+    //post에서 passwordForm이 들어간단 의미는 페이지에 머물러 있는거지
     @WithAccount("young")
-    @DisplayName("패스워드 수정-입력에러")
+    @DisplayName("패스워드 수정-입력에러(불일치)")
     @Test
     void updatePassword_fail() throws Exception {
+        mockMvc.perform(post("/settings/password")
+                        .with(csrf())
+                        .param("newPassword", "123123123")
+                        .param("newPasswordConfirm", "232323232"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(SettingsController.SETTINGS_PASSWORD_VIEW_NAME))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("passwordForm"));
 
     }
-
-
-
 
 }
