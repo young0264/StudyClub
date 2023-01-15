@@ -2,7 +2,8 @@ package com.studyclub.account;
 
 
 import com.studyclub.domain.Account;
-import com.studyclub.settings.Notifications;
+import com.studyclub.settings.form.NicknameForm;
+import com.studyclub.settings.form.Notifications;
 import com.studyclub.settings.Profile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -124,5 +125,20 @@ public class AccountService implements UserDetailsService {
     public void updateNotifications(Account account, Notifications notifications) {
         modelMapper.map(notifications, account);
         accountRepository.save(account);
+    }
+
+    public void updateNickname(Account account, NicknameForm nicknameForm) {
+        modelMapper.map(nicknameForm, account);
+        accountRepository.save(account);
+        login(account);
+    }
+
+    public void sendLoginLink(Account account) {
+        account.generateEmailCheckToken();
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(account.getEmail());
+        mailMessage.setSubject("스터디 클럽, 로그인 링크");
+        mailMessage.setText("/login-by-email?token" + account.getEmailCheckToken() + "$email=" + account.getEmail());
+        javaMailSender.send(mailMessage);
     }
 }

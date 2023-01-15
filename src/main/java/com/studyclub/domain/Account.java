@@ -1,8 +1,7 @@
 package com.studyclub.domain;
 
-import com.studyclub.settings.Notifications;
+import com.studyclub.settings.form.Notifications;
 import lombok.*;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -83,12 +82,4 @@ public class Account {
         this.password = newPassword;
     }
 
-    public void  updateNotifications(Notifications notifications) {
-        this.studyCreatedByEmail = notifications.isStudyCreatedByEmail();
-        this.studyCreatedByWeb = notifications.isStudyCreatedByWeb();
-        this.studyEnrollmentResultByEmail = notifications.isStudyEnrollmentResultByEmail();
-        this.studyEnrollmentResultByWeb = notifications.isStudyEnrollmentResultByWeb();
-        this.studyUpdatedByEmail = notifications.isStudyUpdatedByEmail();
-        this.studyUpdatedByWeb = notifications.isStudyUpdatedByWeb();
-    }
 }
