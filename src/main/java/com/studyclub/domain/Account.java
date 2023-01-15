@@ -1,5 +1,6 @@
 package com.studyclub.domain;
 
+import com.studyclub.settings.Notifications;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -23,7 +24,6 @@ public class Account {
     @Column(unique = true)
     private String nickname;
 
-//    @Length(min=8, max = 50)
     private String password;
 
     private boolean emailVerified;
@@ -78,15 +78,17 @@ public class Account {
         return this.emailCheckTokenGeneratedAt.isBefore(LocalDateTime.now().minusHours(1)); //1시간 이전에 만들었는지
     }
 
-    public void updateProfile(String bio, String url, String occupation, String location, String profileImage) {
-        this.bio = bio;
-        this.url = url;
-        this.occupation = occupation;
-        this.location = location;
-        this.profileImage = profileImage;
-    }
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
+    }
+
+    public void  updateNotifications(Notifications notifications) {
+        this.studyCreatedByEmail = notifications.isStudyCreatedByEmail();
+        this.studyCreatedByWeb = notifications.isStudyCreatedByWeb();
+        this.studyEnrollmentResultByEmail = notifications.isStudyEnrollmentResultByEmail();
+        this.studyEnrollmentResultByWeb = notifications.isStudyEnrollmentResultByWeb();
+        this.studyUpdatedByEmail = notifications.isStudyUpdatedByEmail();
+        this.studyUpdatedByWeb = notifications.isStudyUpdatedByWeb();
     }
 }

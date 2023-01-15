@@ -3,16 +3,7 @@ package com.studyclub.settings;
 import com.studyclub.domain.Account;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
-import javax.persistence.Entity;
-
-@NoArgsConstructor
-@Getter
 @Data
 public class Profile {
 
@@ -30,11 +21,4 @@ public class Profile {
 
     private String profileImage;
 
-    public Profile(Account account) {
-        this.bio = account.getBio();
-        this.url = account.getUrl();
-        this.occupation = account.getOccupation();
-        this.location = account.getLocation();
-        this.profileImage = account.getProfileImage();
-    }
 }

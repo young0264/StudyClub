@@ -6,6 +6,7 @@ import com.studyclub.account.CurrentUser;
 import com.studyclub.domain.Account;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -22,25 +23,22 @@ import javax.validation.Valid;
 @Slf4j
 public class SettingsController {
 
+    static final String SETTINGS_PROFILE = "/settings/profile";
+    static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
+    static final String SETTINGS_PASSWORD_URL = "/settings/password";
+    private final AccountService accountService;
+    private final ModelMapper modelMapper;
+
+
     @InitBinder("passwordForm")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(new PasswordFormValidator());
     }
 
-
-    static final String SETTINGS_PROFILE = "/settings/profile";
-
-    static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
-    static final String SETTINGS_PASSWORD_URL = "/settings/password";
-
-
-    private final AccountService accountService;
-
     @GetMapping("/settings/profile")
-    public String profileUpdateForm(@CurrentUser Account account, Model model) {
+    public String updateProfileForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
-        model.addAttribute(new Profile(account));
-//        model.addAttribute("bio", account.getBio());
+        model.addAttribute(modelMapper.map(account, Profile.class));
         return SETTINGS_PROFILE;
     }
 
@@ -74,6 +72,25 @@ public class SettingsController {
         accountService.updatePassword(account, passwordForm.getNewPassword());
         attributes.addFlashAttribute("message", "패스워드를 변경했습니다.");
         return "redirect:" + SETTINGS_PASSWORD_URL;
+    }
+
+    @GetMapping("/settings/notifications")
+    public String v1(@CurrentUser Account account, Model model) {
+        model.addAttribute(account);
+        model.addAttribute(modelMapper.map(account, Notifications.class)); //account에 해당하는 notifications 값을 뿌려주고 & post로 받아오고
+        return "/settings/notifications";
+    }
+
+    @PostMapping("/settings/notifications")
+    public String v2(@CurrentUser Account account, Model model, @Valid Notifications notifications, Errors errors, RedirectAttributes attributes) {
+        if (errors.hasErrors()) {
+            model.addAttribute(account);
+            return "/settings/notifications";
+        }
+        accountService.updateNotifications(account, notifications);
+        attributes.addFlashAttribute("message", "알림 설정을 변경하였습니다.");
+
+        return "redirect:/settings/notifications";
     }
 
 }
