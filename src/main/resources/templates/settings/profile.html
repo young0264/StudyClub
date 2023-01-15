@@ -20,9 +20,9 @@
             <div class="row">
                 <h2 class="col-sm-12" th:text="${account.nickname}">young</h2>
             </div>
+
             <div class="row mt-3">
-                <form class="col-sm-6" action="#" th:action="@{/settings/profile}" th:object="${profile}" th:method="post"
-                      novalidate>
+                <form class="col-sm-6" action="#" th:action="@{/settings/profile}" th:object="${profile}" th:method="post" novalidate>
                     <div class="form-group">
                         <label for="bio">한 줄 소개</label>
                         <input id="bio" type="text" class="form-control" th:field="*{bio}"
