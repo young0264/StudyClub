@@ -1,8 +1,6 @@
-package com.studyclub.settings;
+package com.studyclub.settings.form;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 @Data

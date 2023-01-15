@@ -1,5 +1,6 @@
-package com.studyclub.settings;
+package com.studyclub.settings.validator;
 
+import com.studyclub.settings.form.PasswordForm;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
