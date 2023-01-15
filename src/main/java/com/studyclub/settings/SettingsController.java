@@ -4,6 +4,11 @@ package com.studyclub.settings;
 import com.studyclub.account.AccountService;
 import com.studyclub.account.CurrentUser;
 import com.studyclub.domain.Account;
+import com.studyclub.settings.form.NicknameForm;
+import com.studyclub.settings.form.Notifications;
+import com.studyclub.settings.form.PasswordForm;
+import com.studyclub.settings.validator.NicknameValidator;
+import com.studyclub.settings.validator.PasswordFormValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -29,14 +34,22 @@ public class SettingsController {
     private final AccountService accountService;
     private final ModelMapper modelMapper;
 
+    private final NicknameValidator nicknameValidator;
+
 
     @InitBinder("passwordForm")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(new PasswordFormValidator());
     }
 
+    @InitBinder("nicknameForm")
+    public void nicknameFormInitBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(nicknameValidator);
+    }
+
     @GetMapping("/settings/profile")
     public String updateProfileForm(@CurrentUser Account account, Model model) {
+
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Profile.class));
         return SETTINGS_PROFILE;
@@ -75,22 +88,39 @@ public class SettingsController {
     }
 
     @GetMapping("/settings/notifications")
-    public String v1(@CurrentUser Account account, Model model) {
+    public String updateNotificationsForm(@CurrentUser Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Notifications.class)); //account에 해당하는 notifications 값을 뿌려주고 & post로 받아오고
         return "/settings/notifications";
     }
 
     @PostMapping("/settings/notifications")
-    public String v2(@CurrentUser Account account, Model model, @Valid Notifications notifications, Errors errors, RedirectAttributes attributes) {
+    public String updateNotifications(@CurrentUser Account account, Model model, @Valid Notifications notifications, Errors errors, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return "/settings/notifications";
         }
         accountService.updateNotifications(account, notifications);
         attributes.addFlashAttribute("message", "알림 설정을 변경하였습니다.");
-
         return "redirect:/settings/notifications";
+    }
+
+    @GetMapping("/settings/account")
+    public String updateAccountForm(@CurrentUser Account account, Model model) {
+        model.addAttribute("account", account);
+        model.addAttribute(modelMapper.map(account, NicknameForm.class));
+        return "/settings/account";
+    }
+
+    @PostMapping("/settings/account")
+    public String updateAccount(@CurrentUser Account account, Model model, @Valid NicknameForm nicknameForm, Errors errors, RedirectAttributes attributes) {
+        if (errors.hasErrors()) {
+            model.addAttribute(account);
+            return "/settings/account";
+        }
+        accountService.updateNickname(account, nicknameForm);
+        attributes.addFlashAttribute("message", "닉네임 수정을 완료했습니다");
+        return "redirect:/settings/account";
     }
 
 }
