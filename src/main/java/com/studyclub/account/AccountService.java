@@ -2,9 +2,11 @@ package com.studyclub.account;
 
 
 import com.studyclub.domain.Account;
+import com.studyclub.settings.Notifications;
 import com.studyclub.settings.Profile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +32,7 @@ public class AccountService implements UserDetailsService {
     private final AccountRepository accountRepository;
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
     public Account processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveAccount(signUpForm);
@@ -68,7 +71,6 @@ public class AccountService implements UserDetailsService {
     public void login(Account account) {
         //방법1
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-//                account.getNickname(),
                 new UserAccount(account),
                 account.getPassword(),  //encoded password
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
@@ -109,7 +111,7 @@ public class AccountService implements UserDetailsService {
 
     public void updateProfile(Account account, Profile profile) {
         //TODO 프로필이미지
-        account.updateProfile(profile.getBio(), profile.getUrl(), profile.getOccupation(), profile.getLocation(), profile.getProfileImage());
+        modelMapper.map(profile, account); //source를 destination으로 mapping
         accountRepository.save(account);
         //TODO 문제한개더
     }
@@ -117,6 +119,10 @@ public class AccountService implements UserDetailsService {
     public void updatePassword(Account account, String newPassword) {
         account.updatePassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
+    }
 
+    public void updateNotifications(Account account, Notifications notifications) {
+        modelMapper.map(notifications, account);
+        accountRepository.save(account);
     }
 }
