@@ -4,37 +4,42 @@ package com.studyclub.settings;
 import com.studyclub.account.AccountService;
 import com.studyclub.account.CurrentUser;
 import com.studyclub.domain.Account;
-import com.studyclub.settings.form.NicknameForm;
-import com.studyclub.settings.form.Notifications;
-import com.studyclub.settings.form.PasswordForm;
+import com.studyclub.domain.Tag;
+import com.studyclub.settings.form.*;
 import com.studyclub.settings.validator.NicknameValidator;
 import com.studyclub.settings.validator.PasswordFormValidator;
+import com.studyclub.tag.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class SettingsController {
 
+    private final TagRepository tagRepository;
+
     static final String SETTINGS_PROFILE = "/settings/profile";
     static final String SETTINGS_PASSWORD_VIEW_NAME = "settings/password";
     static final String SETTINGS_PASSWORD_URL = "/settings/password";
     private final AccountService accountService;
     private final ModelMapper modelMapper;
-
     private final NicknameValidator nicknameValidator;
+    static final String SETTINGS_TAGS_VIEW_NAME = "settings/tags";
+    static final String SETTINGS_TAGS_URL = "/" + SETTINGS_TAGS_VIEW_NAME;
 
 
     @InitBinder("passwordForm")
@@ -123,4 +128,35 @@ public class SettingsController {
         return "redirect:/settings/account";
     }
 
+    @GetMapping(SETTINGS_TAGS_URL)
+    public String updateTags(@CurrentUser Account account, Model model) {
+        model.addAttribute(account);
+        Set<Tag> tags = accountService.getTags(account);
+        model.addAttribute("tags", tags.stream().map(Tag::getTitle).collect(Collectors.toList())); //태그목록 유저에 전달하기
+        return SETTINGS_TAGS_VIEW_NAME;
+    }
+
+    @PostMapping("/settings/tags/add")
+    @ResponseBody
+    public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        String title = tagForm.getTagTitle();
+
+        //1.optional
+//        Tag tag = tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(Tag.builder()
+//                .title(tagForm.getTagTitle())
+//                .build()));
+
+        //2.
+        Tag tag = tagRepository.findByTitle(title);
+        if (tag == null) {
+            log.info("tag 저장 : " + Tag.builder().title(tagForm.getTagTitle()).build());
+            tagRepository.save(Tag.builder().title(tagForm.getTagTitle()).build());
+            log.info(" 저장이 되엇나 : " + tagRepository.findByTitle(title));
+
+        }
+
+        log.info("tag 저장2 : " + tag);
+        accountService.addTag(account, tag);
+        return ResponseEntity.ok().build();
+    }
 }
