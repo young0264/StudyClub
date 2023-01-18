@@ -136,27 +136,31 @@ public class SettingsController {
         return SETTINGS_TAGS_VIEW_NAME;
     }
 
-    @PostMapping("/settings/tags/add")
+//    @PostMapping("/settings/tags/add")
+    @PostMapping(SETTINGS_TAGS_URL + "/add")
     @ResponseBody
     public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
 
-        //1.optional
-//        Tag tag = tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(Tag.builder()
-//                .title(tagForm.getTagTitle())
-//                .build()));
-
-        //2.
         Tag tag = tagRepository.findByTitle(title);
         if (tag == null) {
-            log.info("tag 저장 : " + Tag.builder().title(tagForm.getTagTitle()).build());
-            tagRepository.save(Tag.builder().title(tagForm.getTagTitle()).build());
-            log.info(" 저장이 되엇나 : " + tagRepository.findByTitle(title));
+            tag = tagRepository.save(Tag.builder().title(title).build());
+        }
+        accountService.addTag(account, tag);
+        return ResponseEntity.ok().build();
+    }
 
+    @PostMapping(SETTINGS_TAGS_URL + "/remove")
+    @ResponseBody
+    public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+        String title = tagForm.getTagTitle();
+        Tag tag = tagRepository.findByTitle(title);
+
+        if (tag == null) {
+            return ResponseEntity.badRequest().build();
         }
 
-        log.info("tag 저장2 : " + tag);
-        accountService.addTag(account, tag);
+        accountService.removeTag(account, tag);
         return ResponseEntity.ok().build();
     }
 }

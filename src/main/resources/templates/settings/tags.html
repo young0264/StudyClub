@@ -20,8 +20,7 @@
                         또는 엔터를 입력하세요.
                     </div>
                     <!--                    List<STring> tags = List.of("Spring", "Hibernate", "JPA" => Spring, Hibernate, JPA로 바꿔야 인식 -->
-                    <input id="tags" type="text" name='tags' class="tagify--outside"
-                           aria-describedby="tagHelp"/>
+                    <input id="tags" type="text" name='tags' class="tagify--outside" th:value="${#strings.listJoin(tags, ',')}" aria-describedby="tagHelp"/>
                     <!--                    <input id="tags" type="text" name="tags" class="tagify&#45;&#45;outside" aria-describedby="tagHelp"/>-->
                     <!--                    <input name='tags-outside' class='tagify&#45;&#45;outside' placeholder='write tags to add below'>-->
 
@@ -42,6 +41,7 @@
         });
     });
 </script>
+
 <script type="application/javascript">
 
     $(function () {
@@ -62,7 +62,6 @@
         }
 
         function onAdd(e) {
-            console.log("tag add");
             tagRequest("/add", e.detail.data.value);
         }
 
@@ -70,8 +69,8 @@
             tagRequest("/remove", e.detail.data.value);
         }
 
-        // var tagInput = document.querySelector("#tags");
-        var input = document.querySelector('input[name=tags]')
+        var input = document.querySelector("#tags");
+        // var input = document.querySelector('input[name=tags]')
         var tagify = new Tagify(input, {
             pattern: /^.{0,20}$/,
             dropdown: {
@@ -82,10 +81,8 @@
         tagify.on("add", onAdd);
         tagify.on("remove", onRemove);
 
-        // tagify.DOM.input.classList.add('form-control');
+        tagify.DOM.input.classList.add('form-control');
         // tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
-        // tagify.DOM.scope.parentNode.insertBefore(tagify.DOM.input, tagify.DOM.scope);
-
     });
 </script>
 </body>
