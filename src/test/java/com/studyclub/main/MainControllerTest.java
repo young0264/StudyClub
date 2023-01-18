@@ -1,7 +1,9 @@
 package com.studyclub.main;
 
+import com.studyclub.account.AccountRepository;
 import com.studyclub.account.AccountService;
 import com.studyclub.account.SignUpForm;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,8 @@ class MainControllerTest {
     private MockMvc mockMvc;
     @Autowired
     AccountService accountService;
+    @Autowired
+    AccountRepository accountRepository;
 
     @BeforeEach
     void beforeEach() {
@@ -38,10 +42,14 @@ class MainControllerTest {
         accountService.processNewAccount(newSignUpForm);
     }
 
+    @AfterEach
+    void afterEach() {
+        accountRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("이메일로 로그인 ")
     void login_with_email() throws Exception {
-
         mockMvc.perform(post("/login")
                         .param("username", "ny2485@naver.com") //기본 파라미터
                         .param("password", "12341234")
@@ -79,7 +87,6 @@ class MainControllerTest {
     }
 
     @WithMockUser
-
     @Test
     @DisplayName("로그아웃 ")
     void logout() throws Exception {
