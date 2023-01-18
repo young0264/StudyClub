@@ -1,29 +1,27 @@
 package com.studyclub.settings;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studyclub.WithAccount;
 import com.studyclub.account.AccountRepository;
 import com.studyclub.account.AccountService;
-import com.studyclub.account.SignUpForm;
 import com.studyclub.domain.Account;
-import org.assertj.core.api.Assertions;
+import com.studyclub.domain.Tag;
+import com.studyclub.settings.form.TagForm;
+import com.studyclub.tag.TagRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.TestExecutionEvent;
-import org.springframework.security.test.context.support.WithSecurityContext;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,17 +30,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class SettingsControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
-
-    @Autowired
-    AccountService accountService;
-
-    @Autowired
-    AccountRepository accountRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    @Autowired MockMvc mockMvc;
+    @Autowired AccountService accountService;
+    @Autowired AccountRepository accountRepository;
+    @Autowired PasswordEncoder passwordEncoder;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired TagRepository tagRepository;
 
     @AfterEach
     void afterEach() {
@@ -188,4 +181,67 @@ class SettingsControllerTest {
 
         assertNull(accountRepository.findByNickname(newNickname));
     }
+
+    @WithAccount("young")
+    @DisplayName("태그 수정 폼")
+    @Test
+    void updateTagsForm() throws Exception {
+        mockMvc.perform(get(SettingsController.SETTINGS_TAGS_URL))
+                .andExpect(view().name(SettingsController.SETTINGS_TAGS_VIEW_NAME))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("whitelist"))
+                .andExpect(model().attributeExists("tags"));
+    }
+
+    @WithAccount("young")
+    @DisplayName("계정에 태그 추가")
+    @Test
+    @Transactional
+    void addTag() throws Exception {
+
+        TagForm tagForm = new TagForm();
+        tagForm.setTagTitle("newTag");
+        mockMvc.perform(post(SettingsController.SETTINGS_TAGS_URL + "/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tagForm))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+        Tag newTag = tagRepository.findByTitle("newTag");
+        assertNotNull(newTag);
+        accountRepository.findByNickname("young").getTags().contains(newTag); //account 는 detached 상태임을 인지
+    }
+
+
+    @WithAccount("young")
+    @DisplayName("계정에 태그 삭제")
+    @Test
+    @Transactional
+    void removeTag() throws Exception {
+        Tag newTag = Tag.builder().title("newTag").build();
+        Account account = accountRepository.findByNickname("young");
+        tagRepository.save(newTag);
+
+        accountService.addTag(account, newTag);
+
+        assertTrue(account.getTags().contains(newTag));
+
+
+        TagForm tagForm = new TagForm();
+        tagForm.setTagTitle("newTag");
+
+        mockMvc.perform(post(SettingsController.SETTINGS_TAGS_URL + "/remove")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(tagForm))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+        assertFalse(account.getTags().contains(newTag));
+
+    }
+
+
+
+
 }
