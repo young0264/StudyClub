@@ -1,6 +1,5 @@
-package com.studyclub.settings;
+package com.studyclub.settings.form;
 
-import com.studyclub.domain.Account;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 

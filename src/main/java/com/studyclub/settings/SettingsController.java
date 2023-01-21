@@ -4,13 +4,15 @@ package com.studyclub.settings;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studyclub.account.AccountService;
-import com.studyclub.account.CurrentUser;
+import com.studyclub.account.CurrentAccount;
 import com.studyclub.domain.Account;
 import com.studyclub.domain.Tag;
+import com.studyclub.domain.Zone;
 import com.studyclub.settings.form.*;
 import com.studyclub.settings.validator.NicknameValidator;
 import com.studyclub.settings.validator.PasswordFormValidator;
 import com.studyclub.tag.TagRepository;
+import com.studyclub.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -23,9 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -44,6 +44,7 @@ public class SettingsController {
     static final String SETTINGS_TAGS_VIEW_NAME = "settings/tags";
     static final String SETTINGS_TAGS_URL = "/" + SETTINGS_TAGS_VIEW_NAME;
     private final ObjectMapper objectMapper;
+    private final ZoneRepository zoneRepository;
 
 
     @InitBinder("passwordForm")
@@ -57,7 +58,7 @@ public class SettingsController {
     }
 
     @GetMapping("/settings/profile")
-    public String updateProfileForm(@CurrentUser Account account, Model model) {
+    public String updateProfileForm(@CurrentAccount Account account, Model model) {
 
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Profile.class));
@@ -65,7 +66,7 @@ public class SettingsController {
     }
 
     @PostMapping("/settings/profile") //이 account는 영속상태가 아님, model 기본 등록
-    public String updateProfile(@CurrentUser Account account, @Valid Profile profile,
+    public String updateProfile(@CurrentAccount Account account, @Valid Profile profile,
                                 Errors errors, Model model, RedirectAttributes attributes) {
         log.info("errors : " + errors);
         if (errors.hasErrors()) {
@@ -79,14 +80,14 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_PASSWORD_URL)
-    public String passwordUpdateForm(@CurrentUser Account account, Model model) {
+    public String passwordUpdateForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(new PasswordForm());
         return SETTINGS_PASSWORD_VIEW_NAME;
     }
 
     @PostMapping("/settings/password")
-    public String updatePassword(@CurrentUser Account account, @Valid PasswordForm passwordForm, Errors errors, Model model, RedirectAttributes attributes) {
+    public String updatePassword(@CurrentAccount Account account, @Valid PasswordForm passwordForm, Errors errors, Model model, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return SETTINGS_PASSWORD_VIEW_NAME;
@@ -97,14 +98,14 @@ public class SettingsController {
     }
 
     @GetMapping("/settings/notifications")
-    public String updateNotificationsForm(@CurrentUser Account account, Model model) {
+    public String updateNotificationsForm(@CurrentAccount Account account, Model model) {
         model.addAttribute(account);
         model.addAttribute(modelMapper.map(account, Notifications.class)); //account에 해당하는 notifications 값을 뿌려주고 & post로 받아오고
         return "/settings/notifications";
     }
 
     @PostMapping("/settings/notifications")
-    public String updateNotifications(@CurrentUser Account account, Model model, @Valid Notifications notifications, Errors errors, RedirectAttributes attributes) {
+    public String updateNotifications(@CurrentAccount Account account, Model model, @Valid Notifications notifications, Errors errors, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return "/settings/notifications";
@@ -115,14 +116,14 @@ public class SettingsController {
     }
 
     @GetMapping("/settings/account")
-    public String updateAccountForm(@CurrentUser Account account, Model model) {
+    public String updateAccountForm(@CurrentAccount Account account, Model model) {
         model.addAttribute("account", account);
         model.addAttribute(modelMapper.map(account, NicknameForm.class));
         return "/settings/account";
     }
 
     @PostMapping("/settings/account")
-    public String updateAccount(@CurrentUser Account account, Model model, @Valid NicknameForm nicknameForm, Errors errors, RedirectAttributes attributes) {
+    public String updateAccount(@CurrentAccount Account account, Model model, @Valid NicknameForm nicknameForm, Errors errors, RedirectAttributes attributes) {
         if (errors.hasErrors()) {
             model.addAttribute(account);
             return "/settings/account";
@@ -133,7 +134,7 @@ public class SettingsController {
     }
 
     @GetMapping(SETTINGS_TAGS_URL)
-    public String updateTags(@CurrentUser Account account, Model model) throws JsonProcessingException {
+    public String updateTags(@CurrentAccount Account account, Model model) throws JsonProcessingException {
         model.addAttribute(account);
         Set<Tag> tags = accountService.getTags(account);
         model.addAttribute("tags", tags.stream().map(Tag::getTitle).collect(Collectors.toList())); //태그목록 유저에 전달하기
@@ -144,10 +145,10 @@ public class SettingsController {
         return SETTINGS_TAGS_VIEW_NAME;
     }
 
-//    @PostMapping("/settings/tags/add")
+    //    @PostMapping("/settings/tags/add")
     @PostMapping(SETTINGS_TAGS_URL + "/add")
     @ResponseBody
-    public ResponseEntity addTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity addTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
 
         Tag tag = tagRepository.findByTitle(title);
@@ -160,13 +161,48 @@ public class SettingsController {
 
     @PostMapping(SETTINGS_TAGS_URL + "/remove")
     @ResponseBody
-    public ResponseEntity removeTag(@CurrentUser Account account, @RequestBody TagForm tagForm) {
+    public ResponseEntity removeTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
         String title = tagForm.getTagTitle();
         Tag tag = tagRepository.findByTitle(title);
         if (tag == null) {
             return ResponseEntity.badRequest().build();
         }
         accountService.removeTag(account, tag);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/zones")
+    public String updateZonesForm(@CurrentAccount Account account, Model model) throws JsonProcessingException {
+        model.addAttribute(account);
+//        Set<Zone> zones = account.getZones();
+        Set<Zone> zones = accountService.getZones(account);
+        model.addAttribute("zones", zones.stream().map(Zone::toString).collect(Collectors.toList()));
+
+        List<String> allZone = zoneRepository.findAll().stream().map(Zone::toString).collect(Collectors.toList());
+        model.addAttribute("whitelist", objectMapper.writeValueAsString(allZone));
+
+        return "/settings/zones";
+    }
+
+    @PostMapping("/zones/add")
+    @ResponseBody
+    public ResponseEntity addZone(@CurrentAccount Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (zone == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        accountService.addZone(account, zone);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/zones/remove")
+    @ResponseBody
+    public ResponseEntity removeZone(@CurrentAccount Account account, @RequestBody ZoneForm zoneForm) {
+        Zone zone = zoneRepository.findByCityAndProvince(zoneForm.getCityName(), zoneForm.getProvinceName());
+        if (zone == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        accountService.removeZone(account, zone);
         return ResponseEntity.ok().build();
     }
 }
