@@ -145,7 +145,6 @@ public class SettingsController {
         return SETTINGS_TAGS_VIEW_NAME;
     }
 
-    //    @PostMapping("/settings/tags/add")
     @PostMapping(SETTINGS_TAGS_URL + "/add")
     @ResponseBody
     public ResponseEntity addTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {

@@ -91,4 +91,7 @@ public class Account {
         this.password = newPassword;
     }
 
+    public boolean isManagerOf(Study study) {
+        return study.getManagers().contains(this);
+    }
 }
