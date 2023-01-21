@@ -82,14 +82,14 @@ public class AccountController {
     }
 
     @GetMapping("/check-email")
-    public String v1(@CurrentUser Account account, Model model) {
+    public String v1(@CurrentAccount Account account, Model model) {
         String email = account.getEmail();
         model.addAttribute("email", email);
         return "account/check-email";
     }
 
     @GetMapping("/resend-confirm-email")
-    public String emailResendToConfirm(@CurrentUser Account account, Model model) {
+    public String emailResendToConfirm(@CurrentAccount Account account, Model model) {
         if (!account.canSendConfirmEmail()) {
             model.addAttribute("error", "인증 이메일은 1시간에 1번만 전송할 수 있습니다.");
             model.addAttribute("email", account.getEmail());
@@ -101,7 +101,7 @@ public class AccountController {
     }
 
     @GetMapping("/profile/{nickname}")
-    public String viewProfile(@PathVariable String nickname, Model model, @CurrentUser Account account) {
+    public String viewProfile(@PathVariable String nickname, Model model, @CurrentAccount Account account) {
         Account byNickname = accountRepository.findByNickname(nickname);
 //        log.info("byNickname email verfied: " + byNickname.isEmailVerified());
         if (byNickname == null) {

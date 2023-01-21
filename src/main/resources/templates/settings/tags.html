@@ -19,6 +19,7 @@
                         참여하고 싶은 스터디 주제를 입력해 주세요. 해당 주제의 스터디가 생기면 알림을 받을 수 있습니다. 태그를 입력하고 콤마(,)
                         또는 엔터를 입력하세요.
                     </div>
+                    <div id="whitelist" th:text="${whitelist}" hidden></div>
                     <!--                    List<STring> tags = List.of("Spring", "Hibernate", "JPA" => Spring, Hibernate, JPA로 바꿔야 인식 -->
                     <input id="tags" type="text" name='tags' class="tagify--outside" th:value="${#strings.listJoin(tags, ',')}" aria-describedby="tagHelp"/>
                     <!--                    <input id="tags" type="text" name="tags" class="tagify&#45;&#45;outside" aria-describedby="tagHelp"/>-->
@@ -32,15 +33,8 @@
 
 <script src="/node_modules/@yaireo/tagify/dist/tagify.min.js"></script>
 
-<script type="application/javascript" th:inline="javascript" th:fragment="ajax-csrf-header">
-    $(function () {
-        var csrfToken = /*[[${_csrf.token}]]*/ null;
-        var csrfHeader = /*[[${_csrf.headerName}]]*/ null;
-        $(document).ajaxSend(function (e, xhr, options) {
-            xhr.setRequestHeader(csrfHeader, csrfToken);
-        });
-    });
-</script>
+<script th:replace="fragments.html:: ajax-csrf-header"></script>
+
 
 <script type="application/javascript">
 
@@ -73,6 +67,7 @@
         // var input = document.querySelector('input[name=tags]')
         var tagify = new Tagify(input, {
             pattern: /^.{0,20}$/,
+            whitelist: JSON.parse(document.querySelector("#whitelist").textContent),
             dropdown: {
                 position: "input",
                 enabled: 0,

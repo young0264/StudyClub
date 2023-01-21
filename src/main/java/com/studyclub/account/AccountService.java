@@ -2,9 +2,11 @@ package com.studyclub.account;
 
 
 import com.studyclub.domain.Account;
+import com.studyclub.domain.Tag;
+import com.studyclub.domain.Zone;
 import com.studyclub.settings.form.NicknameForm;
 import com.studyclub.settings.form.Notifications;
-import com.studyclub.settings.Profile;
+import com.studyclub.settings.form.Profile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,8 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +41,6 @@ public class AccountService implements UserDetailsService {
 
     public Account processNewAccount(SignUpForm signUpForm) {
         Account newAccount = saveAccount(signUpForm);
-        newAccount.generateEmailCheckToken();
         sendSignUpConfirmEmail(newAccount);
         //        ConsoleMailSender consoleMailSender = new ConsoleMailSender();
         //        consoleMailSender.send(simpleMailMessage);
@@ -46,17 +49,12 @@ public class AccountService implements UserDetailsService {
 
     /**
      * 캡슐화
+     * modelMapper로 리팩토링
      */
-    private Account saveAccount(SignUpForm signUpForm) {
-        Account account = Account.builder()
-                .nickname(signUpForm.getNickname())
-                .password(passwordEncoder.encode(signUpForm.getPassword())) //TODO
-                .email(signUpForm.getEmail())
-                .emailCheckTokenGeneratedAt(LocalDateTime.now())
-                .studyCreatedByWeb(true)
-                .studyEnrollmentResultByWeb(true)
-                .studyUpdatedByWeb(true)
-                .build();
+    private Account saveAccount(@Valid SignUpForm signUpForm) {
+        signUpForm.setPassword(passwordEncoder.encode(signUpForm.getPassword()));
+        Account account = modelMapper.map(signUpForm, Account.class); //password, email , nickname 은 modelmapper로 가져옴.
+        account.generateEmailCheckToken();
         return accountRepository.save(account);
     }
 
@@ -140,5 +138,40 @@ public class AccountService implements UserDetailsService {
         mailMessage.setSubject("스터디 클럽, 로그인 링크");
         mailMessage.setText("/login-by-email?token" + account.getEmailCheckToken() + "$email=" + account.getEmail());
         javaMailSender.send(mailMessage);
+    }
+
+    //영속성에 account가  detach인가
+
+    public void addTag(Account account, Tag tag) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> a.getTags().add(tag));
+//        accountRepository.save(account);
+    }
+
+    public Set<Tag> getTags(Account account) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        return byId.orElseThrow().getTags();
+    }
+
+    public void removeTag(Account account, Tag tag) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> a.getTags().remove(tag));
+    }
+
+    public Set<Zone> getZones(Account account) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        return byId.orElseThrow().getZones();
+    }
+
+    public void addZone(Account account, Zone zone) {
+//        account.getZones().add(zone); //de?
+        Optional<Account> byId = accountRepository.findById(account.getId());
+        byId.ifPresent(a -> a.getZones().add(zone));
+    }
+
+    public void removeZone(Account account, Zone zone) {
+        Optional<Account> byId = accountRepository.findById(account.getId());
+//        byId.orElseThrow().getZones().remove(zone);
+        byId.ifPresent(a -> a.getZones().remove(zone));
     }
 }
