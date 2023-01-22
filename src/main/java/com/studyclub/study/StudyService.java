@@ -34,6 +34,9 @@ public class StudyService {
         return study;
     }
 
+    /**
+     * 경로에 해당하는 study 가져오기
+     */
     public Study getStudyToUpdate(Account account, String path) {
         Study study = this.getStudy(path);
         if (!account.isManagerOf(study)) {
@@ -45,4 +48,17 @@ public class StudyService {
     public void updateStudyDescription(Study study, StudyDescriptionForm studyDescriptionForm) {
         modelMapper.map(studyDescriptionForm, study);
     }
+
+    public void updateStudyImage(Study study, String image) {
+        study.setImage(image);
+    }
+
+    public void enableStudyBanner(Study study) {
+        study.setUseBanner(true);
+    }
+
+    public void disableStudyBanner(Study study) {
+        study.setUseBanner(false);
+    }
+
 }
