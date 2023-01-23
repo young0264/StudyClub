@@ -1,6 +1,5 @@
 package com.studyclub.zone;
 
-
 import com.studyclub.domain.Zone;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 public class ZoneService {
 
     private final ZoneRepository zoneRepository;
-
 
     @PostConstruct
     public void initZoneData() throws IOException {

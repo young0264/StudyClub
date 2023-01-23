@@ -1,4 +1,4 @@
-package com.studyclub.settings.form;
+package com.studyclub.zone;
 
 
 import com.studyclub.domain.Zone;

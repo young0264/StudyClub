@@ -11,7 +11,10 @@ import com.studyclub.domain.Zone;
 import com.studyclub.settings.form.*;
 import com.studyclub.settings.validator.NicknameValidator;
 import com.studyclub.settings.validator.PasswordFormValidator;
+import com.studyclub.tag.TagForm;
 import com.studyclub.tag.TagRepository;
+import com.studyclub.tag.TagService;
+import com.studyclub.zone.ZoneForm;
 import com.studyclub.zone.ZoneRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +49,7 @@ public class SettingsController {
     private final ObjectMapper objectMapper;
     private final ZoneRepository zoneRepository;
 
+    private final TagService tagService;
 
     @InitBinder("passwordForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -128,7 +132,7 @@ public class SettingsController {
             model.addAttribute(account);
             return "/settings/account";
         }
-        accountService.updateNickname(account, nicknameForm);
+        accountService.updateNickname(account, nicknameForm.getNickname());
         attributes.addFlashAttribute("message", "닉네임 수정을 완료했습니다");
         return "redirect:/settings/account";
     }
@@ -148,12 +152,7 @@ public class SettingsController {
     @PostMapping(SETTINGS_TAGS_URL + "/add")
     @ResponseBody
     public ResponseEntity addTag(@CurrentAccount Account account, @RequestBody TagForm tagForm) {
-        String title = tagForm.getTagTitle();
-
-        Tag tag = tagRepository.findByTitle(title);
-        if (tag == null) {
-            tag = tagRepository.save(Tag.builder().title(title).build());
-        }
+        Tag tag = tagService.findOrCreateNew(tagForm.getTagTitle());
         accountService.addTag(account, tag);
         return ResponseEntity.ok().build();
     }

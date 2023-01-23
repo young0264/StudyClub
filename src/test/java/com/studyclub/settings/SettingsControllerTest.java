@@ -6,7 +6,7 @@ import com.studyclub.account.AccountRepository;
 import com.studyclub.account.AccountService;
 import com.studyclub.domain.Account;
 import com.studyclub.domain.Tag;
-import com.studyclub.settings.form.TagForm;
+import com.studyclub.tag.TagForm;
 import com.studyclub.tag.TagRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

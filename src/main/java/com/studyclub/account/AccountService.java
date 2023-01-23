@@ -125,8 +125,8 @@ public class AccountService implements UserDetailsService {
         accountRepository.save(account);
     }
 
-    public void updateNickname(Account account, NicknameForm nicknameForm) {
-        modelMapper.map(nicknameForm, account);
+    public void updateNickname(Account account, String nickname) {
+        account.setNickname(nickname);
         accountRepository.save(account);
         login(account);
     }
