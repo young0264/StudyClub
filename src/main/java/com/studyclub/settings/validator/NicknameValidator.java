@@ -17,6 +17,7 @@ public class NicknameValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
+
         return NicknameForm.class.isAssignableFrom(clazz);
     }
 
