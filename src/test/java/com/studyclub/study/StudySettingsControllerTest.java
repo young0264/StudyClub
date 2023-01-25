@@ -1,21 +1,16 @@
 package com.studyclub.study;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-
-import com.studyclub.WithAccount;
-import com.studyclub.domain.Account;
-import com.studyclub.domain.Study;
+import com.studyclub.account.WithAccount;
+import com.studyclub.modules.account.Account;
+import com.studyclub.modules.study.Study;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

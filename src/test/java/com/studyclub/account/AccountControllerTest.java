@@ -1,6 +1,7 @@
 package com.studyclub.account;
 
-import com.studyclub.domain.Account;
+import com.studyclub.modules.account.Account;
+import com.studyclub.modules.account.AccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

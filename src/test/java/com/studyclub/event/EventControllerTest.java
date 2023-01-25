@@ -1,18 +1,17 @@
 package com.studyclub.event;
 
 
-import com.studyclub.WithAccount;
-import com.studyclub.domain.Account;
-import com.studyclub.domain.Event;
-import com.studyclub.domain.EventType;
-import com.studyclub.domain.Study;
+import com.studyclub.account.WithAccount;
+import com.studyclub.modules.account.Account;
+import com.studyclub.modules.event.EnrollmentRepository;
+import com.studyclub.modules.event.Event;
+import com.studyclub.modules.event.EventService;
+import com.studyclub.modules.event.EventType;
+import com.studyclub.modules.study.Study;
 import com.studyclub.study.StudyControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 

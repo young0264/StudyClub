@@ -2,10 +2,12 @@ package com.studyclub.study;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.studyclub.WithAccount;
-import com.studyclub.account.AccountRepository;
-import com.studyclub.domain.Account;
-import com.studyclub.domain.Study;
+import com.studyclub.account.WithAccount;
+import com.studyclub.modules.account.AccountRepository;
+import com.studyclub.modules.account.Account;
+import com.studyclub.modules.study.Study;
+import com.studyclub.modules.study.StudyRepository;
+import com.studyclub.modules.study.StudyService;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
