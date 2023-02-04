@@ -1,17 +1,23 @@
 package com.studyclub.event;
 
 
+import com.studyclub.account.AccountFactory;
 import com.studyclub.account.WithAccount;
+import com.studyclub.infra.AbstractContainerBaseTest;
+import com.studyclub.infra.MockMvcTest;
 import com.studyclub.modules.account.Account;
+import com.studyclub.modules.account.AccountRepository;
 import com.studyclub.modules.event.EnrollmentRepository;
 import com.studyclub.modules.event.Event;
 import com.studyclub.modules.event.EventService;
 import com.studyclub.modules.event.EventType;
 import com.studyclub.modules.study.Study;
 import com.studyclub.study.StudyControllerTest;
+import com.studyclub.study.StudyFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
@@ -21,30 +27,35 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class EventControllerTest extends StudyControllerTest {
+@MockMvcTest
+class EventControllerTest extends AbstractContainerBaseTest {
 
     @Autowired
-    EventService eventService;
+    MockMvc mockMvc;
     @Autowired
-    EnrollmentRepository enrollmentRepository;
+    StudyFactory studyFactory;
+    @Autowired
+    AccountFactory accountFactory;
+    @Autowired EventService eventService;
+    @Autowired EnrollmentRepository enrollmentRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
     @Test
     @DisplayName("선착순 모임에 참가 신청 - 자동 수락")
     @WithAccount("young")
     void newEnrollment_to_FCFS_event_accepted() throws Exception {
-
-        Account young = createAccount("young");
-        Study study = createStudy("test-study", young);
-        Event event = createEvent("test-event", EventType.FCFS, 2, study, young);
+        Account whiteship = accountFactory.createAccount("whiteship");
+        Study study = studyFactory.createStudy("test-study", whiteship);
+        Event event = createEvent("test-event", EventType.FCFS, 2, study, whiteship);
 
         mockMvc.perform(post("/study/" + study.getPath() + "/events/" + event.getId() + "/enroll")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/study/" + study.getPath() + "/events/" + event.getId()));
 
-        Account account = accountRepository.findByNickname("young");
-        isAccepted(account, event);
-
+        Account keesun = accountRepository.findByNickname("young");
+        isAccepted(keesun, event);
     }
 
 

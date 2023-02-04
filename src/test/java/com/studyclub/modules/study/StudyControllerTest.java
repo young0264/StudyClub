@@ -3,6 +3,8 @@ package com.studyclub.study;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.studyclub.account.WithAccount;
+import com.studyclub.infra.AbstractContainerBaseTest;
+import com.studyclub.infra.MockMvcTest;
 import com.studyclub.modules.account.AccountRepository;
 import com.studyclub.modules.account.Account;
 import com.studyclub.modules.study.Study;
@@ -22,11 +24,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Transactional
-@SpringBootTest
-@AutoConfigureMockMvc
-@RequiredArgsConstructor
-public class StudyControllerTest {
+@MockMvcTest
+public class StudyControllerTest extends AbstractContainerBaseTest {
 
     @Autowired
     protected MockMvc mockMvc;
@@ -156,3 +155,5 @@ public class StudyControllerTest {
 
 
 }
+
+

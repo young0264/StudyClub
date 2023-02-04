@@ -1,5 +1,7 @@
 package com.studyclub.account;
 
+import com.studyclub.infra.AbstractContainerBaseTest;
+import com.studyclub.infra.MockMvcTest;
 import com.studyclub.modules.account.Account;
 import com.studyclub.modules.account.AccountRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +14,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,9 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //코드 변경 후 그 코드에 대해 깨트리지 않았다는 것을 증명
-@SpringBootTest
-@AutoConfigureMockMvc
-class AccountControllerTest {
+//
+
+@MockMvcTest
+@Testcontainers
+class AccountControllerTest extends AbstractContainerBaseTest {
+
 
     @Autowired
     private MockMvc mockMvc;
