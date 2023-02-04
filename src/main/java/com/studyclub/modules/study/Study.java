@@ -6,6 +6,7 @@ import com.studyclub.modules.account.UserAccount;
 import com.studyclub.modules.tag.Tag;
 import com.studyclub.modules.zone.Zone;
 import lombok.*;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import javax.persistence.*;
 import java.net.URLEncoder;
@@ -30,13 +31,22 @@ import java.util.Set;
         @NamedAttributeNode("managers")})
 @NamedEntityGraph(name = "Study.withMembers", attributeNodes = {
         @NamedAttributeNode("members")})
-@Entity @Getter @Setter
-@Builder @EqualsAndHashCode(of = "id")
-@NoArgsConstructor @AllArgsConstructor
+//@NamedEntityGraph(name = "Study.withTagsAndZones", attributeNodes = {
+//        @NamedAttributeNode("tags"),
+//        @NamedAttributeNode("zones")})
+
+@Entity
+@Getter
+@Setter
+@Builder
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Study {
 
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     Long id;
 
     @ManyToMany
@@ -52,10 +62,12 @@ public class Study {
 
     private String shortDescription;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String fullDescription;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
+    @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String image;
 
     @ManyToMany
@@ -82,6 +94,7 @@ public class Study {
     public void addManager(Account account) {
         managers.add(account);
     }
+
     public boolean isJoinable(UserAccount userAccount) {
         Account account = userAccount.getAccount();
         return this.isPublished() && this.isRecruiting()
@@ -100,6 +113,7 @@ public class Study {
     public String getImage() {
         return image != null ? image : "/images/default_banner.png";
     }
+
     public void publish() {
         if (!this.closed && !this.published) {
             this.published = true;
@@ -139,6 +153,7 @@ public class Study {
     public boolean canUpdateRecruiting() {
         return this.published && this.recruitingUpdatedDateTime == null || this.recruitingUpdatedDateTime.isBefore(LocalDateTime.now().minusHours(1));
     }
+
     public boolean isRemovable() {
         return !this.published; // TODO 모임을 했던 스터디는 삭제할 수 없다.
     }
@@ -159,4 +174,6 @@ public class Study {
     public boolean isManagerOf(Account account) {
         return this.getManagers().contains(account);
     }
+
+
 }
