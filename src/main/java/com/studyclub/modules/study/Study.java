@@ -16,25 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 //쿼리 갯수를 줄이는 방법 but heavy
-@NamedEntityGraph(name = "Study.withAll", attributeNodes = {
-        @NamedAttributeNode("tags"),
-        @NamedAttributeNode("zones"),
-        @NamedAttributeNode("managers"),
-        @NamedAttributeNode("members")})
-@NamedEntityGraph(name = "Study.withTagsAndManagers", attributeNodes = {
-        @NamedAttributeNode("tags"),
-        @NamedAttributeNode("managers")})
-@NamedEntityGraph(name = "Study.withZonesAndManagers", attributeNodes = {
-        @NamedAttributeNode("zones"),
-        @NamedAttributeNode("managers")})
-@NamedEntityGraph(name = "Study.withManagers", attributeNodes = {
-        @NamedAttributeNode("managers")})
-@NamedEntityGraph(name = "Study.withMembers", attributeNodes = {
-        @NamedAttributeNode("members")})
-//@NamedEntityGraph(name = "Study.withTagsAndZones", attributeNodes = {
-//        @NamedAttributeNode("tags"),
-//        @NamedAttributeNode("zones")})
-
 @Entity
 @Getter
 @Setter
@@ -90,8 +71,11 @@ public class Study {
 
     private boolean useBanner;
 
+    private int memberCount;
+
 
     public void addManager(Account account) {
+
         managers.add(account);
     }
 
@@ -160,11 +144,16 @@ public class Study {
 
 
     public void addMember(Account account) {
+
         this.getMembers().add(account);
+        this.memberCount++;
+
     }
 
     public void removeMember(Account account) {
         this.getMembers().remove(account);
+        this.memberCount--;
+
     }
 
     public String getEncodedPath() {
