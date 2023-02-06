@@ -2,10 +2,10 @@ package com.studyclub.modules.account;
 
 
 import com.studyclub.modules.account.form.SignUpForm;
-import com.studyclub.modules.settings.form.Profile;
+import com.studyclub.modules.account.form.Profile;
 import com.studyclub.modules.tag.Tag;
 import com.studyclub.modules.zone.Zone;
-import com.studyclub.modules.settings.form.Notifications;
+import com.studyclub.modules.account.form.Notifications;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

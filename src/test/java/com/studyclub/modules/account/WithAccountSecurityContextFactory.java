@@ -1,6 +1,5 @@
-package com.studyclub.account;
+package com.studyclub.modules.account;
 
-import com.studyclub.modules.account.AccountService;
 import com.studyclub.modules.account.form.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

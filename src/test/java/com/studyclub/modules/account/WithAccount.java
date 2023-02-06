@@ -1,4 +1,4 @@
-package com.studyclub.account;
+package com.studyclub.modules.account;
 
 import org.springframework.security.test.context.support.WithSecurityContext;
 

@@ -1,4 +1,4 @@
-package com.studyclub.account;
+package com.studyclub.modules.account;
 
 import com.studyclub.modules.account.Account;
 import com.studyclub.modules.account.AccountRepository;

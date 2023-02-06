@@ -1,4 +1,4 @@
-package com.studyclub.modules.settings.form;
+package com.studyclub.modules.account.form;
 
 
 import lombok.*;

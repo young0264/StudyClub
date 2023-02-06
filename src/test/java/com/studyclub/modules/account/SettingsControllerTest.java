@@ -1,31 +1,22 @@
-package com.studyclub.account;
+package com.studyclub.modules.account;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.studyclub.infra.AbstractContainerBaseTest;
 import com.studyclub.infra.MockMvcTest;
-import com.studyclub.modules.account.AccountRepository;
-import com.studyclub.modules.account.AccountService;
-import com.studyclub.modules.account.SettingsController;
 import com.studyclub.modules.tag.TagRepository;
 import com.studyclub.modules.zone.Zone;
 import com.studyclub.modules.zone.ZoneRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @MockMvcTest
-class SettingsControllerTest extends AbstractContainerBaseTest {
+class SettingsControllerTest  {
 
     @Autowired MockMvc mockMvc;
     @Autowired AccountService accountService;

@@ -1,19 +1,13 @@
-package com.studyclub.event;
+package com.studyclub.modules.event;
 
 
-import com.studyclub.account.AccountFactory;
-import com.studyclub.account.WithAccount;
-import com.studyclub.infra.AbstractContainerBaseTest;
+import com.studyclub.modules.account.AccountFactory;
+import com.studyclub.modules.account.WithAccount;
 import com.studyclub.infra.MockMvcTest;
 import com.studyclub.modules.account.Account;
 import com.studyclub.modules.account.AccountRepository;
-import com.studyclub.modules.event.EnrollmentRepository;
-import com.studyclub.modules.event.Event;
-import com.studyclub.modules.event.EventService;
-import com.studyclub.modules.event.EventType;
 import com.studyclub.modules.study.Study;
-import com.studyclub.study.StudyControllerTest;
-import com.studyclub.study.StudyFactory;
+import com.studyclub.modules.study.StudyFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @MockMvcTest
-class EventControllerTest extends AbstractContainerBaseTest {
+class EventControllerTest  {
 
     @Autowired
     MockMvc mockMvc;

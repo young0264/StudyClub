@@ -1,9 +1,9 @@
-package com.studyclub.modules.settings.validator;
+package com.studyclub.modules.account.validator;
 
 
 import com.studyclub.modules.account.AccountRepository;
 import com.studyclub.modules.account.Account;
-import com.studyclub.modules.settings.form.NicknameForm;
+import com.studyclub.modules.account.form.NicknameForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

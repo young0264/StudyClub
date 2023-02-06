@@ -2,13 +2,20 @@ package com.studyclub.modules.study;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.studyclub.modules.account.Account;
+import com.studyclub.modules.study.event.StudyCreatedEvent;
+import com.studyclub.modules.study.event.StudyUpdateEvent;
 import com.studyclub.modules.tag.Tag;
+import com.studyclub.modules.tag.TagRepository;
 import com.studyclub.modules.zone.Zone;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.utility.RandomString;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
 
 import static com.studyclub.modules.study.form.StudyForm.VALID_PATH_PATTERN;
 
@@ -21,11 +28,14 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final ObjectMapper objectMapper;
     private final ModelMapper modelMapper;
+    private final ApplicationEventPublisher eventPublisher;
+    private final TagRepository tagRepository;
 
 
     public Study createNewStudy(Study study, Account account) {
         Study newStudy = studyRepository.save(study);
         newStudy.addManager(account);
+        eventPublisher.publishEvent(new StudyCreatedEvent(newStudy)); //스터디 생성하는데 이메일 보내느라 한참걸려?
         return newStudy;
     }
 
@@ -46,6 +56,7 @@ public class StudyService {
 
     public void updateStudyDescription(Study study, StudyDescriptionForm studyDescriptionForm) {
         modelMapper.map(studyDescriptionForm, study);
+        eventPublisher.publishEvent(new StudyUpdateEvent(study, "스터디 소개를 수정했습니다."));
     }
 
     public void updateStudyImage(Study study, String image) {
@@ -109,18 +120,24 @@ public class StudyService {
 
     public void publish(Study study) {
         study.publish();
+        this.eventPublisher.publishEvent(new StudyCreatedEvent(study));
     }
 
     public void close(Study study) {
         study.close();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"스터디를 종료했습니다."));
     }
 
     public void startRecruit(Study study) {
         study.startRecruit();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"팀원 모집을 시작합니다."));
     }
 
     public void stopRecruit(Study study) {
         study.stopRecruit();
+        eventPublisher.publishEvent(new StudyUpdateEvent(study,"팀원 모집을 중단했습니다."));
+
+
     }
 
     public boolean isValidPath(String newPath) {
@@ -163,4 +180,6 @@ public class StudyService {
         checkIfExistingStudy(path, study);
         return study;
     }
+
+
 }

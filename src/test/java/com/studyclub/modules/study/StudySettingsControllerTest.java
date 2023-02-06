@@ -1,21 +1,15 @@
-package com.studyclub.study;
+package com.studyclub.modules.study;
 
 
-import com.studyclub.account.AccountFactory;
-import com.studyclub.account.WithAccount;
-import com.studyclub.infra.AbstractContainerBaseTest;
+import com.studyclub.modules.account.AccountFactory;
+import com.studyclub.modules.account.WithAccount;
 import com.studyclub.infra.MockMvcTest;
 import com.studyclub.modules.account.Account;
 import com.studyclub.modules.account.AccountRepository;
-import com.studyclub.modules.study.Study;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -24,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @MockMvcTest
-class StudySettingsControllerTest extends AbstractContainerBaseTest {
+class StudySettingsControllerTest  {
 
     @Autowired
     AccountFactory accountFactory;

@@ -1,23 +1,15 @@
-package com.studyclub.study;
+package com.studyclub.modules.study;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.studyclub.account.WithAccount;
-import com.studyclub.infra.AbstractContainerBaseTest;
+import com.studyclub.modules.account.WithAccount;
 import com.studyclub.infra.MockMvcTest;
 import com.studyclub.modules.account.AccountRepository;
 import com.studyclub.modules.account.Account;
-import com.studyclub.modules.study.Study;
-import com.studyclub.modules.study.StudyRepository;
-import com.studyclub.modules.study.StudyService;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +17,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @MockMvcTest
-public class StudyControllerTest extends AbstractContainerBaseTest {
+public class StudyControllerTest  {
 
     @Autowired
     protected MockMvc mockMvc;
