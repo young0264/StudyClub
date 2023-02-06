@@ -9,13 +9,17 @@
 <div class="alert alert-warning" role="alert" th:if="${account != null && !account?.emailVerified}">
     스터디올레 가입을 완료하려면 <a th:href="@{/check-email}" class="alert-link">계정 인증 이메일을 확인</a>하세요.
 </div>
-
-
-<div class="container">
-    <div class="py-5 text-center">
-        <h2>스터디 클럽 main page</h2>
+<div class="jumbotron">
+    <div class="container" style="text-align:center">
+        <h1>스터디클럽 </h1>
+        <h5>태그와 지역 기반으로 스터디를 찾고 참여하세요.</h5>
+        <h5>스터디 모임 관리 기능을 제공합니다.</h5>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button" th:href="@{/sign-up}">회원 가입</a></p>
     </div>
-    <div th:replace="fragments.html :: footer"></div>
 </div>
+<div th:replace="fragments.html :: study-search(${studyTop9})"></div>
+<div th:replace="fragments.html :: footer"></div>
+<div th:replace="fragments.html :: date-time"></div>
+
 </body>
 </html>
